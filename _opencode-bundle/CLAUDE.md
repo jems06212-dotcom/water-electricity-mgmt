@@ -16,11 +16,12 @@
 
 ## Obsidian
 
-- Obsidian vault 路徑：`D:\googole driver\my-vault`
+- Obsidian vault 路徑：`D:\googole driver\my-vault`（若公司路徑不同，啟動開工 SOP 時會自動偵測或詢問你）
+- 開工 SOP 動態偵測：先試 MCP → `.obsidian-vault-path.txt` → 常見 GDrive 路徑 → 問使用者
 
 ## Codex 溝通橋接
 
-- 橋接目錄：`C:\Users\jems0\Documents\Codex\opencode-bridge`
+- 橋接目錄：`%USERPROFILE%\Documents\Codex\opencode-bridge`（Sisyphus 啟動時自動解析實際路徑）
 - Sisyphus 交辦 Codex → 寫入 `inbox/`
 - Codex 回報 Sisyphus → 寫入 `outbox/`
 - 已完成任務歸檔到 `archive/`

@@ -12,6 +12,9 @@ credentials.*
 .DS_Store
 Thumbs.db
 
+# 本機路徑快取（各機器不同，勿 commit）
+.obsidian-vault-path.txt
+
 # Node.js (若有)
 node_modules/
 package-lock.json

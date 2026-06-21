@@ -290,3 +290,11 @@ firebase login                    # Firebase 登入（可能需要 --reauth）
 ### □ 專案接續
 - [ ] git clone 水電管理專案（或進現有目錄 git pull）
 - [ ] 打開 Codex / OpenCode 說「開工」
+
+### □ 路徑快取（第一次開工後自動產生）
+說「開工」後，Sisyphus 會自動偵測 vault 路徑。
+第一次確認後會建立 `.obsidian-vault-path.txt` 到專案根目錄，
+之後同一臺機器就不會再問了。這個檔案會透過 git/GDrive 同步。
+
+> ⚠️ 如果公司跟家裡的 vault 路徑不同，**這個檔案不要 commit 到 git**，
+> 兩臺機器各自保留自己的版本。已在 `.gitignore` 確認。

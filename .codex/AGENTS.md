@@ -7,9 +7,9 @@
 
 ## 專案資訊
 
-- 專案路徑：`D:\googole driver\水電管理\`（家中）／ `<公司GDrive路徑>\水電管理\`（公司）
+- 專案路徑：本專案所在目錄（GDrive 內）
 - GitHub repo：`https://github.com/jems06212-dotcom/water-electricity-mgmt`
-- Obsidian 工作筆記：`D:\googole driver\my-vault\水電管理\工作筆記.md`
+- Obsidian 工作筆記：`<GDrive路徑>/my-vault/水電管理/工作筆記.md`（位置依各機器 GDrive 路徑而定）
 - 開源類型：公開 repo
 
 ## 日常流程
