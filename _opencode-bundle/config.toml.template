@@ -1,0 +1,95 @@
+# Codex config.toml 範本 — 複製到 %USERPROFILE%\.codex\config.toml 後改路徑
+# 對照家裡 C:\Users\jems0\.codex\config.toml 產生
+
+sandbox_mode = "danger-full-access"
+approval_policy = "never"
+personality = "pragmatic"
+
+notify = [ "C:\\Users\\<公司帳號>\\AppData\\Local\\OpenAI\\Codex\\runtimes\\cua_node\\<版本>\\bin\\node_modules\\@oai\\sky\\bin\\windows\\codex-computer-use.exe", "turn-ended" ]
+
+[features]
+js_repl = false
+memories = true
+workspace_dependencies = true
+
+# ── MCP Servers ──────────────────────────────────
+
+[mcp_servers.node_repl]
+args = []
+command = 'C:\Users\<公司帳號>\AppData\Local\OpenAI\Codex\runtimes\cua_node\<版本>\bin\node_repl.exe'
+startup_timeout_sec = 120
+
+[mcp_servers.notebooklm]
+command = 'C:\Users\<公司帳號>\AppData\Roaming\Python\Python314\Scripts\notebooklm-mcp.exe'
+
+[mcp_servers.obsidian]
+command = 'C:\Users\<公司帳號>\AppData\Roaming\npm\mcpvault.cmd'
+args = ['<公司GDrive路徑>\my-vault']
+startup_timeout_sec = 120
+
+[mcp_servers.firebase]
+command = 'npx'
+args = ['-y', 'firebase-tools@latest', 'mcp']
+startup_timeout_sec = 120
+
+[mcp_servers.supabase]
+command = 'powershell'
+args = ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-Command', "$url=[Environment]::GetEnvironmentVariable('SUPABASE_URL','User'); $key=[Environment]::GetEnvironmentVariable('SUPABASE_SERVICE_ROLE_KEY','User'); if (-not $url -or -not $key) { throw 'Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY user environment variable' }; & npx -y '@supabase/mcp-server-supabase@latest' '--supabase-url' $url '--supabase-service-role-key' $key"]
+startup_timeout_sec = 120
+
+[mcp_servers.google-forms]
+command = 'powershell'
+args = ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-Command', "$names=@('GOOGLE_CLIENT_ID','GOOGLE_CLIENT_SECRET','GOOGLE_REFRESH_TOKEN'); foreach ($n in $names) { $v=[Environment]::GetEnvironmentVariable($n,'User'); if (-not $v) { throw ('Missing ' + $n + ' user environment variable') }; Set-Item -Path ('Env:' + $n) -Value $v }; & node '<公司OpenCode路徑>/google-forms-mcp/build/index.js'"]
+startup_timeout_sec = 120
+
+# ── Codex Plugins（啟用後會自動下載）───────────────
+
+[plugins."documents@openai-primary-runtime"]
+enabled = true
+
+[plugins."spreadsheets@openai-primary-runtime"]
+enabled = true
+
+[plugins."presentations@openai-primary-runtime"]
+enabled = true
+
+[plugins."github@openai-curated"]
+enabled = true
+
+[plugins."computer-use@openai-bundled"]
+enabled = true
+
+[plugins."gmail@openai-curated"]
+enabled = true
+
+[plugins."slack@openai-curated"]
+enabled = true
+
+[plugins."google-calendar@openai-curated"]
+enabled = true
+
+[plugins."linear@openai-curated"]
+enabled = true
+
+[plugins."google-drive@openai-curated"]
+enabled = true
+
+[plugins."openai-developers@openai-curated"]
+enabled = true
+
+[plugins."pdf@openai-primary-runtime"]
+enabled = true
+
+[plugins."browser@openai-bundled"]
+enabled = true
+
+[plugins."chrome@openai-bundled"]
+enabled = true
+
+# ── 桌面設定 ──────────────────────────────────────
+
+[desktop]
+localeOverride = "zh-TW"
+integratedTerminalShell = "powershell"
+git-always-force-push = true
+defaultTerminalLocation = "bottom"
