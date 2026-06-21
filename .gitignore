@@ -1,0 +1,17 @@
+# Google Drive 系統檔
+desktop.ini
+*.tmp
+~$*
+
+# 敏感資料
+.env
+*.key
+credentials.*
+
+# 系統
+.DS_Store
+Thumbs.db
+
+# Node.js (若有)
+node_modules/
+package-lock.json
