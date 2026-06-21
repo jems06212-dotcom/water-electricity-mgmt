@@ -11,5 +11,5 @@
 - **收工**：說「收工」→ 更新筆記 + commit + push
 
 ## 相關連結
-- GitHub repo：`https://github.com/jems06212-dotcom/水電管理`
+- GitHub repo：[water-electricity-mgmt](https://github.com/jems06212-dotcom/water-electricity-mgmt)
 - 本地路徑：`D:\googole driver\水電管理\`
