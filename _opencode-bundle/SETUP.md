@@ -1,163 +1,155 @@
-# 🏠↔🏢 雙地工作 OpenCode 設定指南
+# 🏠↔🏢 雙地工作設定指南
 
-## 情境
+## 你的實際狀況
 
-- **A 機器（家裡筆電）**：已有完整 OpenCode + Codex + 技能
-- **B 機器（公司電腦）**：全新安裝，要接續 A 的工作
+| | 家裡（筆電） | 公司（桌電） |
+|---|---|---|
+| **主要工具** | OpenCode（Sisyphus 調度） | Codex CLI |
+| **GDrive 路徑** | `D:\googole driver` | 不同的路徑 |
+| **專案檔案在哪** | 在 GDrive 內（自動同步） | 在 `Documents\Codex\` 內（非雲端） |
+| **已有進度** | 剛初始化專案 | 已有寫好的文件/企劃 |
 
-## 事前檢查
+## 核心策略：GitHub 當 source of truth
 
-OpenCode 本體需要手動安裝（沒有雲端版），到公司後要重新裝一次。
+```
+GitHub repo (water-electricity-mgmt)
+    ↕                          ↕
+🏠 家裡 OpenCode  ←───  🏢 公司 Codex
+    (git push/pull)     (git push/pull)
+```
 
-> ✅ 專案檔案在 GDrive 會自動同步
-> ✅ Obsidian vault 在 GDrive 會自動同步
-> ✅ GitHub 記錄所有版本歷史
+> GDrive 只輔助同步靜態檔案。**git 才是正式的版本同步工具。**
 
 ---
 
-## Step 1 — 安裝 OpenCode
+## 第一趟：把公司的 Codex 檔案接進來
 
-在 B 機器上，先安裝 OpenCode：
+你到公司後，照以下步驟把 Codex 寫好的檔案搬進這個專案：
+
+### 在公司電腦上
+
+**① 找出公司的 GDrive 路徑**
 
 ```powershell
-npm install -g opencode
+# 執行看看哪個路徑存在
+Test-Path "G:\我的雲端硬碟"
+Test-Path "$env:USERPROFILE\Google Drive"
+Test-Path "$env:USERPROFILE\My Drive"
 ```
 
-確認版本：
+假設找到的路徑是 `X:\你的GDrive路徑`，下面都用 `<公司GDrive>` 代替。
+
+**② 建立專案資料夾（在 GDrive 內）**
+
 ```powershell
-opencode --version
+mkdir -p "<公司GDrive>\水電管理"
+cd "<公司GDrive>\水電管理"
 ```
 
----
-
-## Step 2 — 安裝懶人包技能
-
-複製貼上這段，一次性安裝所有懶人包技能：
+**③ 把 Codex 寫好的檔案搬過來**
 
 ```powershell
-# 建立技能目錄
-mkdir -p "$env:USERPROFILE\.agents\skills\claude-code-lazy-packs\skills"
-cd "$env:USERPROFILE\.agents\skills\claude-code-lazy-packs"
+# 把 Codex 工作區的水電管理相關檔案複製過來
+Copy-Item -Path "$env:USERPROFILE\Documents\Codex\*水電*" -Destination "." -Recurse
+# 或手動把水電管理相關的 .md、.txt、程式檔等搬過來
+```
+
+**④ git 初始化 + 接上遠端 repo**
+
+```powershell
 git init
-git remote add origin https://github.com/mathruffian-dot/claude-code-lazy-packs
-git pull origin main
+git remote add origin https://github.com/jems06212-dotcom/water-electricity-mgmt
+git fetch origin
+git checkout -b master origin/master
 ```
 
-> 如果 git pull 失敗，技能也可以手動從 A 機器複製：
-> - 來源（A）：`C:\Users\jems0\.agents\skills\claude-code-lazy-packs\`
-> - 目的地（B）：`C:\Users\<B的帳號>\.agents\skills\claude-code-lazy-packs\`
+> 這會把 GitHub 上已有的專案檔案（CLAUDE.md、.gitignore、_opencode-bundle 等）拉下來，
+> 跟你搬進來的 Codex 檔案合併。
+
+**⑤ 把 Codex 寫的檔案加入 git**
+
+```powershell
+git add .
+git commit -m "feat: 匯入 Codex 撰寫的專案文件"
+git push origin master
+```
+
+✅ 完成。以後 Codex 就直接在 `<公司GDrive>\水電管理\` 這個目錄工作。
+
+**⑥ 設定 Codex 專案級規則**
+
+專案內已有 `.codex\AGENTS.md`，Codex 進這個目錄後會自動讀取。裡面已經寫好：
+- GitHub repo 網址
+- 日常 git 流程（開始工作 → pull → 結束工作 → push）
+- 注意事項
 
 ---
 
-## Step 3 — 放 CLAUDE.md（最重要）
+## 第二趟之後：日常同步節奏
 
-**這是 Sisyphus 的靈魂檔案**，決定 OpenCode 開機後的行為模式。
-
-```powershell
-# 確保你有 OpenCode 工作目錄
-mkdir -p D:\OPENCODE_0621
-```
-
-把 `_opencode-bundle\CLAUDE.md` 複製到 `D:\OPENCODE_0621\CLAUDE.md`。
-
-> 位置必須跟 A 機器一樣是 `D:\OPENCODE_0621\CLAUDE.md`，否則 Sisyphus 找不到設定。
->
-> 如果你的 D 槽結構不同，可以放在別的地方，但要確保 OpenCode 啟動時的工作目錄是那一層。
-
----
-
-## Step 4 — 放 .omo 設定
-
-`_opencode-bundle\.omo\` 包含排程器、協議、任務定義，全部複製到 `D:\OPENCODE_0621\.omo\`。
+### 🏢 在公司用 Codex 工作
 
 ```powershell
-# 從 _opencode-bundle 複製 .omo 到 OpenCode 工作目錄
-Copy-Item -Path "D:\googole driver\水電管理\_opencode-bundle\.omo" -Destination "D:\OPENCODE_0621\" -Recurse -Force
+cd "<公司GDrive>\水電管理"
+
+# 開始
+git pull origin master          # 拿家裡的最新進度
+codex                            # 打開 Codex 開始工作
+# （Codex 會自動讀 .codex/AGENTS.md）
+
+# 結束前（手動或請 Codex 幫忙）
+git add .
+git commit -m "feat: 清楚的 commit 訊息"
+git push origin master
 ```
 
----
-
-## Step 5 — 登入 GitHub
+### 🏠 回家用 OpenCode 工作
 
 ```powershell
-gh auth login
-```
-
-選 **HTTPS** → **Login with a web browser** → 貼上 one-time code 認證。
-
-確認成功：
-```powershell
-gh auth status
-```
-
----
-
-## Step 6 — 設定 Codex（如果有用 Codex）
-
-如果 B 機器也有裝 Codex，把以下規則加到 `%USERPROFILE%\.codex\AGENTS.md`：
-
-```markdown
-回答問題時都要用繁體中文。
-
-開專案時先幫我環境檢測，只在開始檢測一次，發現異常請回報給我
-
-開專案或進入專案資料夾時，環境檢測要先參考：
-D:\codex\01.5-Codex必裝Skills與Plugins.md
-
-# 第二大腦（與 OpenCode 同步）
-- Obsidian vault 路徑：`D:\googole driver\my-vault`
-
-# 水電管理專案
-- 專案路徑：`D:\googole driver\水電管理`
-- 專案 GitHub：`https://github.com/jems06212-dotcom/water-electricity-mgmt`
-- 工作筆記：`D:\googole driver\my-vault\水電管理\工作筆記.md`
-
-# 工作規則（與 OpenCode 同步）
-- OpenCode 專案路徑：`D:\OPENCODE_0621`
-```
-
----
-
-## Step 7 — 開始工作
-
-```powershell
-# 確保 GDrive 同步完成
-ls "D:\googole driver\水電管理"
-
-# 進入專案
 cd "D:\googole driver\水電管理"
 
-# 打開 OpenCode
-opencode
+# 說「開工」→ 我會 git fetch 告訴你遠端有更新 → 建議 pull
+# 確認 pull 後接續工作
+
+# 說「收工」→ 自動 commit + push + 更新工作筆記
 ```
-
-在 OpenCode 中說：**「開工」**
-
-我會自動：
-1. 讀 Obsidian 工作筆記 → 告訴你上次做到哪
-2. 檢查 git 遠端狀態 → 建議 git pull
-3. 讓你決定方向
 
 ---
 
-## 每日工作節奏
+## 發生衝突怎麼辦？
+
+如果兩邊都改了同一個檔案：
 
 ```
-🏠 在家：
-  工作 → 說「收工」→ 自動 commit + push + 更新工作筆記
-
-🏢 在公司：
-  進專案 → 說「開工」→ git pull → 接續上次進度 → 工作 → 說「收工」
-
-🏠 回家：
-  說「開工」→ git pull → 接續工作...
+# 在家 pull 時出現 conflict
+說「開工」後 → 我發現衝突
+→ 告知你哪個檔案衝突
+→ 你手動選擇要保留哪個版本
+→ 再 commit 一次即可
 ```
 
-### 要點
+**避免衝突的方法：**
+- 兩邊不同時編輯同一個檔案
+- 每天結束前一定要 commit + push
+- 開始工作前一定要 pull
 
-| 動作 | 時機 |
-|------|------|
-| **git pull** | 每次換機器後第一次開工時做 |
-| **說「收工」** | 每次結束開發前，確保 commit + push |
-| **留意 GDrive 同步** | 換機器前確認 GDrive 圖示已完成同步（綠色勾） |
-| **不要同時編輯** | 同一台機器關掉 OpenCode 再換另一台，避免衝突 |
+---
+
+## 如果你的公司 GDrive 路徑跟家裡不同
+
+**所有寫死路徑的設定檔需要調整：**
+
+| 檔案 | 裡面有路徑 | 到公司要改成 |
+|------|-----------|------------|
+| `.codex\AGENTS.md` | `D:\googole driver\...` | `<公司GDrive>\...` |
+| `CLAUDE.md` | `D:\googole driver\...` | `<公司GDrive>\...` |
+
+> 如果公司不裝 OpenCode，只純用 Codex，那只需要調整 `.codex\AGENTS.md` 即可。
+> CLAUDE.md 是給 OpenCode 讀的，公司沒 OpenCode 就不影響。
+
+---
+
+## 總結一句話
+
+> **公司 Codex：** 把檔案搬進 GDrive 專案 → 設定 git remote → 以後都在這工作 → push
+> **家裡 Sisyphus：** 說「開工」→ pull → 工作 → 說「收工」→ push
